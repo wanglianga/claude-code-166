@@ -1,0 +1,43 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  application:
+    name: homebed
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/homebed}
+    username: ${DB_USER:homebed}
+    password: ${DB_PASSWORD:homebed123}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc.time_zone: Asia/Shanghai
+        format_sql: false
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 60MB
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+
+app:
+  upload-dir: ${UPLOAD_DIR:./uploads}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.townclinic.homebed: info

@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: homebed
+      POSTGRES_USER: homebed
+      POSTGRES_PASSWORD: homebed123
+    ports:
+      - "5432:5432"
+    volumes:
+      - homebed-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homebed -d homebed"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/homebed
+      DB_USER: homebed
+      DB_PASSWORD: homebed123
+      UPLOAD_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - homebed-uploads:/app/uploads
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "8088:80"
+
+volumes:
+  homebed-pgdata:
+  homebed-uploads:
