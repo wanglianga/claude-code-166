@@ -1,0 +1,52 @@
+name: homebed-platform
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: homebed-postgres
+    environment:
+      POSTGRES_DB: homebed
+      POSTGRES_USER: homebed
+      POSTGRES_PASSWORD: homebed123
+      TZ: Asia/Shanghai
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homebed -d homebed"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+    container_name: homebed-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: homebed
+      DB_USER: homebed
+      DB_PASSWORD: homebed123
+      JWT_SECRET: town-health-center-home-bed-platform-secret-key-2026-very-long
+      UPLOAD_DIR: /app/uploads
+      TZ: Asia/Shanghai
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads:/app/uploads
+
+  frontend:
+    build: ./frontend
+    container_name: homebed-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8088:80"
+
+volumes:
+  pgdata:
+  uploads:

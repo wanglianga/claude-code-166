@@ -1,0 +1,40 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: homebed-backend
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:homebed}
+    username: ${DB_USER:homebed}
+    password: ${DB_PASSWORD:homebed123}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: Asia/Shanghai
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+app:
+  jwt:
+    # 生产环境通过环境变量覆盖
+    secret: ${JWT_SECRET:town-health-center-home-bed-platform-secret-key-2026-very-long}
+    expire-hours: ${JWT_EXPIRE_HOURS:12}
+  upload:
+    dir: ${UPLOAD_DIR:./uploads}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    cn.townhc.homebed: info
